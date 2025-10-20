@@ -27,8 +27,24 @@
         margin-bottom: 20px;
       }
 
-      p {
+      .message {
         margin: 5px 0;
+        padding: 10px;
+        border-radius: 5px;
+        max-width: 70%;
+        clear: both;
+      }
+
+      .user-message {
+        background-color: #d1e7dd;
+        margin-left: auto;
+        color: #0f5132;
+      }
+
+      .bot-message {
+        background-color: #f8d7da;
+        margin-right: auto;
+        color: #721c24;
       }
 
       #user-input {
@@ -53,7 +69,6 @@
         background-color: #218838;
       }
 
-      /* Responsive design */
       @media (max-width: 600px) {
         #user-input {
           width: 100%;
@@ -90,10 +105,43 @@
 
         const data = await response.json();
         const chatDiv = document.getElementById("chat");
-        chatDiv.innerHTML += `<p>You: ${message}</p>`;
-        chatDiv.innerHTML += `<p>Bot: ${data.message || data.options}</p>`;
+        chatDiv.innerHTML += `<div class="message user-message">You: ${message}</div>`;
+        chatDiv.innerHTML += `<div class="message bot-message">Bot: ${
+          data.message || data.options
+        }</div>`;
+
+        if (message === "99") {
+          const amount = 1000;
+          const email = prompt("Please enter your email for payment:");
+
+          const paymentResponse = await fetch("/paystack/charge", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ amount, email }),
+          });
+
+          const paymentData = await paymentResponse.json();
+          if (paymentData.status) {
+            window.location.href = paymentData.data.authorization_url;
+          } else {
+            alert("Payment initialization failed.");
+          }
+        }
+
         chatDiv.scrollTop = chatDiv.scrollHeight;
       }
+
+      window.onload = async () => {
+        const response = await fetch("/chatbot", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message: "" }),
+        });
+
+        const data = await response.json();
+        const chatDiv = document.getElementById("chat");
+        chatDiv.innerHTML += `<div class="message bot-message">Bot: ${data.options}</div>`;
+      };
     </script>
   </body>
 </html>

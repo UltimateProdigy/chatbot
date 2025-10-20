@@ -1,9 +1,8 @@
-require('dotenv').config();
-
 const express = require("express");
 const bodyParser = require("body-parser");
 const cookieSession = require("cookie-session");
 const chatbotRoutes = require("./routes/chatbot");
+const paymentRoutes = require("./routes/payment");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -20,6 +19,7 @@ app.use(
 );
 
 app.use("/chatbot", chatbotRoutes);
+app.use("/", paymentRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);

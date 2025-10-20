@@ -16,12 +16,24 @@ router.post("/", (req, res) => {
     session.order = [];
   }
 
+  if (!message) {
+    return res.json({
+      options: `
+                Select 1 to Place an order
+                Select 99 to checkout order
+                Select 98 to see order history
+                Select 97 to see current order
+                Select 0 to cancel order
+            `,
+    });
+  }
+
   switch (message) {
     case "1":
       res.json({
         options:
           menuItems
-            .map((item) => `${item.id}: ${item.name} - $${item.price}`)
+            .map((item) => `${item.id}: ${item.name} - ₦${item.price}`)
             .join("\n") + "\nSelect item by number.",
       });
       break;
